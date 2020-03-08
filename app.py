@@ -7,6 +7,7 @@ from flask import request
 from src.Modules.prediction import prediction
 from src.Modules.recommender import recommendation
 import logging
+from flask import render_template
 
 
 # CORS(app)
@@ -34,11 +35,24 @@ def predict():
     except Exception as err:
         logging.exception(err)
 
+@app.route('/login', methods=["POST"])
+def login():
+    data=request.get_json()
+    username=data["name"]
+    password=data[" password"]
+
+    logging.debug(data)
+    return render_template("login.html")
+# @app.route('/user/add',methods=['GET'])
+# def add_to_list():
+#     items=request.args.getlist('items')
+#     logging.debug("mssg",items)
+#     return (items[1])
+
 @app.route('/')
 def welcome():
-    text="Weclome to SmartList API"
-    return text
+    return "Welcome To Smart Flask List API"
 
 if __name__ == '__main__':
     app.run(debug=True)
-    app.run()
+

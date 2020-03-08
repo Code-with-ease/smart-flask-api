@@ -1,7 +1,7 @@
 from src.DB_helper.DB_fetch import db_fecth
 import turicreate as tc
 import json
-
+from src.Modules.name_category_fetcher import fetch_details
 
 class recommendation:
     similarity_type = 'cosine'
@@ -11,6 +11,7 @@ class recommendation:
     def __init__(self, user_id):
         self.db = db_fecth()
         self.user_id = user_id
+        self.item_detail_db=fetch_details()
 
     def get_user(self):
         """
@@ -75,23 +76,21 @@ class recommendation:
         # recom=m.recommend(users,k=10) UNCOMMENT IF want to test for all users
         model.save()
         recom = model.recommend(user_arr, k=10)
-        output = {}
-        output["item_id"] = []
+        output_arr = []
 
         for items in recom["item_id"]:
-            output["item_id"].append(items)
+            output_arr.append(items)
 
-        return json.dumps(output)
+        return json.dumps(self.item_detail_db.fetch_item_details(output_arr))
 
     def recommend_with_existing_model(self):
         model = self.get_model()
         user_arr = []
         user_arr.append(str(self.user_id))
         recom = model.recommend(user_arr, k=10)
-        output = {}
-        output["item_id"] = []
+        output_arr= []
 
         for items in recom["item_id"]:
-            output["item_id"].append(items)
+            output_arr.append(int(items))
 
-        return json.dumps(output)
+        return json.dumps(self.item_detail_db.fetch_item_details(output_arr))

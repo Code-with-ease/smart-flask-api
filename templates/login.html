@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/login.css') }}"
+    />
+  </head>
+  <body>
+    <script src="{{ url_for('static',filename='js/login.js') }}"></script>
+    <div class="form-modal">
+      <div class="form-toggle">
+        <button id="login-toggle" onclick="toggleLogin()">log in</button>
+        <button id="signup-toggle" onclick="toggleSignup()">sign up</button>
+      </div>
+
+      <div id="login-form">
+        <form name="login" action="{{ url_for('login') }}" method="POST">
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Enter email"
+          />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter password"
+          />
+          <input
+            id="submit"
+            type="submit"
+            name="submit"
+            class="btn login"
+            value="login"
+          />
+          <p><a href="javascript:void(0)">Forgotten account</a></p>
+        </form>
+      </div>
+
+      <div id="signup-form">
+        <form name="signup">
+          <input type="email" placeholder="Enter your email" />
+          <input type="text" placeholder="Choose username" />
+          <input type="password" placeholder="Create password" />
+          <button type="button" class="btn signup">create account</button>
+          <p>
+            Clicking <strong>create account</strong> means that you are agree to
+            our <a href="javascript:void(0)">terms of services</a>.
+          </p>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

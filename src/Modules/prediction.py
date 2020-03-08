@@ -6,6 +6,7 @@ from sklearn.svm import SVR
 from sklearn.ensemble import RandomForestRegressor
 import math
 from scipy import stats
+from src.Modules.name_category_fetcher import fetch_details
 
 
 class prediction:
@@ -18,6 +19,7 @@ class prediction:
     def __init__(self,userid):
         self.db=db_fecth()
         self.userid=userid
+        self.item_detail_db = fetch_details()
 
     def prefetch(self, item_id_dict, item_info):
         for x in item_info:
@@ -149,7 +151,8 @@ class prediction:
                                                  "_id": 0})
         itemDetails = recent_purchases.find(user_dict, {'_id': 0})  # Mongo query
 
-        output = []
+        output_item_id = []
+        output_quantity={}
         item_id_dict = {}  # Stores the item and dates and quantity array
         item_info_dict = []  # stores the avg , last_date and item_id
 
@@ -181,15 +184,21 @@ class prediction:
 
                 if (len(item_dict["dates"]) > 2 and len(item_dict["quantity"]) > 2):
                     ans = self.algo(dates=item_dict["dates"], quantity=item_dict["quantity"], gap=t)
-                    dictionary = dict({'item_id': itemid})
 
-                    # itemName = itemlist.find( dictionary, {'item_name':1 ,'item_id':1, '_id':0})
+                    output_item_id.append(int(itemid))
+                    output_quantity[int(itemid)]=round(ans)
 
-                    item_pred['itemID'] = itemid
-                    # for name in itemName['item_name']:
-                    item_pred['itemName'] = "Test_items"
-                    item_pred['Quantity'] = round(ans)
-                    output.append(item_pred)
+        output_dict=self.item_detail_db.fetch_item_details(output_item_id)
+        output_result=[]
+        for i in output_dict:
+            temp_dict={}
+            for key,value in i.items():
+                temp_dict[key]=value
+                print(i["itemid"])
+            temp_dict["item_quantity"]=output_quantity[i["itemid"]]
+            output_result.append((temp_dict))
 
-        json_output = json.dumps(output)
+        print(output_quantity,output_item_id,output_dict)
+
+        json_output = json.dumps(output_result)
         return json_output
